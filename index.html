@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handball Federation Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">HF Management</h1>
+            <div class="flex items-center space-x-4">
+                <button onclick="switchRole('admin')" class="px-4 py-2 rounded hover:bg-blue-700">Admin</button>
+                <button onclick="switchRole('club')" class="px-4 py-2 rounded hover:bg-blue-700">Club</button>
+                <button onclick="switchRole('player')" class="px-4 py-2 rounded hover:bg-blue-700">Player</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <!-- Role-specific Dashboard -->
+        <div id="adminDashboard" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-2">Total Clubs</h3>
+                    <p class="text-3xl font-bold text-blue-600">15</p>
+                </div>
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-2">Total Players</h3>
+                    <p class="text-3xl font-bold text-blue-600">324</p>
+                </div>
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-2">Active Clubs</h3>
+                    <p class="text-3xl font-bold text-blue-600">12</p>
+                </div>
+            </div>
+
+            <!-- Club Management -->
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Club Management</h2>
+                <div class="flex gap-4 mb-4">
+                    <input type="text" placeholder="Search clubs..." class="flex-1 p-2 border rounded">
+                    <button onclick="addClub()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Add New Club
+                    </button>
+                </div>
+                <div id="clubsList" class="space-y-4">
+                    <!-- Club items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="clubDashboard" class="hidden">
+            <!-- Player Management -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">Player Management</h2>
+                <div class="flex gap-4 mb-4">
+                    <input type="text" placeholder="Search players..." class="flex-1 p-2 border rounded">
+                    <button onclick="addPlayer()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Add New Player
+                    </button>
+                </div>
+                <div id="playersList" class="space-y-4">
+                    <!-- Player items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="playerDashboard" class="hidden">
+            <!-- Player Profile -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-2xl font-semibold mb-4">Player Profile</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="font-semibold">Name: <span class="font-normal">John Doe</span></p>
+                        <p class="font-semibold">Age: <span class="font-normal">22</span></p>
+                        <p class="font-semibold">Player ID: <span class="font-normal">HF2023001</span></p>
+                        <p class="font-semibold">Club: <span class="font-normal">Warriors HC</span></p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Documents:</p>
+                        <div class="mt-2 space-y-2">
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-file-earmark-text"></i>
+                                <span>ID Proof.pdf</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-file-earmark-image"></i>
+                                <span>Player Photo.jpg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Club Modal -->
+    <div id="clubModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4">Add New Club</h3>
+            <form id="clubForm" class="space-y-4">
+                <div>
+                    <label class="block mb-1">Club Name</label>
+                    <input type="text" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Manager Email</label>
+                    <input type="email" class="w-full p-2 border rounded" required>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" onclick="closeModal('clubModal')" class="px-4 py-2 border rounded">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Player Modal -->
+    <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4">Add New Player</h3>
+            <form id="playerForm" class="space-y-4">
+                <div>
+                    <label class="block mb-1">Player Name</label>
+                    <input type="text" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Age</label>
+                    <input type="number" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Aadhaar Number</label>
+                    <input type="text" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block mb-1">Upload Documents</label>
+                    <input type="file" class="w-full p-2 border rounded" multiple>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" onclick="closeModal('playerModal')" class="px-4 py-2 border rounded">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Role switching
+        function switchRole(role) {
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('clubDashboard').classList.add('hidden');
+            document.getElementById('playerDashboard').classList.add('hidden');
+            document.getElementById(role + 'Dashboard').classList.remove('hidden');
+        }
+
+        // Modal handling
+        function addClub() {
+            document.getElementById('clubModal').classList.remove('hidden');
+        }
+
+        function addPlayer() {
+            document.getElementById('playerModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Form handling
+        document.getElementById('clubForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add club logic here
+            closeModal('clubModal');
+        });
+
+        document.getElementById('playerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add player logic here
+            closeModal('playerModal');
+        });
+
+        // Initialize with admin view
+        switchRole('admin');
+
+        // Mock data population
+        const clubsList = document.getElementById('clubsList');
+        const playersList = document.getElementById('playersList');
+
+        // Sample club data
+        const clubs = [
+            { name: 'Warriors HC', manager: 'manager@warriors.com', players: 25 },
+            { name: 'Tigers Club', manager: 'manager@tigers.com', players: 30 }
+        ];
+
+        // Sample player data
+        const players = [
+            { name: 'John Smith', age: 24, id: 'HF2023002', club: 'Warriors HC' },
+            { name: 'Sarah Johnson', age: 22, id: 'HF2023003', club: 'Warriors HC' }
+        ];
+
+        // Populate clubs
+        clubs.forEach(club => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center p-4 border rounded';
+            div.innerHTML = `
+                <div>
+                    <h4 class="font-semibold">${club.name}</h4>
+                    <p class="text-sm text-gray-600">${club.manager}</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm">${club.players} players</span>
+                    <button class="text-blue-600 hover:text-blue-800"><i class="bi bi-pencil"></i></button>
+                    <button class="text-red-600 hover:text-red-800"><i class="bi bi-trash"></i></button>
+                </div>
+            `;
+            clubsList.appendChild(div);
+        });
+
+        // Populate players
+        players.forEach(player => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center p-4 border rounded';
+            div.innerHTML = `
+                <div>
+                    <h4 class="font-semibold">${player.name}</h4>
+                    <p class="text-sm text-gray-600">ID: ${player.id}</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm">Age: ${player.age}</span>
+                    <button class="text-blue-600 hover:text-blue-800"><i class="bi bi-pencil"></i></button>
+                    <button class="text-red-600 hover:text-red-800"><i class="bi bi-trash"></i></button>
+                </div>
+            `;
+            playersList.appendChild(div);
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
